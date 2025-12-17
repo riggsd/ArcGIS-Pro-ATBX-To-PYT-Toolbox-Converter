@@ -1,32 +1,13 @@
 # ArcGIS Pro ATBX to PYT Toolbox Converter
 
-A Python Toolbox (.pyt) for ArcGIS Pro that converts legacy .ATBX toolboxes to the more portable and editable Python Toolbox (.pyt) format.
+A Python tool for ArcGIS Pro that converts legacy .ATBX toolboxes to the more portable and editable Python Toolbox (.pyt) format.
 
-## Overview
+This tool lets you take advantage of the convenient GUI for creating Tools and managing their Parameters by initially creating Script Tools in an .ATBX Toolbox. Once you've dialed in all the Parameters, their attributes, and even ToolValidator validation logic, you can convert to Python Tools in a .PYT Python Toolbox. A Python Toolbox is entirely written in Python and *may* be maintained and distributed as a single Python file, while an .ATBX Toolbox requires maintaining an opaque binary file alongside your .PY scripts.
 
-This tool helps migrate ArcGIS Pro toolboxes from the binary .ATBX format to Python Toolbox format, which offers several advantages:
-- **Human-readable**: Python Toolboxes are plain text Python files
-- **Version control friendly**: Easy to track changes in Git or other VCS
-- **Portable**: Can be easily shared and edited without ArcGIS Pro
-- **Extensible**: Direct access to Python code for customization
+Be warned that you will be responsible for adding the `execute()` method implementations to each Tool, since this converter doesn't attempt to change the .PY source for your Script Tools. You may choose to migrate their entire implementations into the .PYT file, or you may choose to `import` their contents from .PY scripts in the same folder. 
 
-## Features
+It's also possible that some custom ToolValidator code may not be imported perfectly, since Parameter validation supports arbitrary Python code. If you've kept your ToolValidator simple and based on ESRI's template class using an indexed list of `self.params`, then this importer should migrate your logic reasonably.
 
-The converter extracts and translates:
-- ✅ Toolbox metadata (name, alias, label)
-- ✅ Tool definitions and descriptions
-- ✅ Parameter definitions with all attributes:
-  - Display names and internal names
-  - Data types (folders, files, workspaces, strings, numbers, etc.)
-  - Required/Optional status
-  - File type filters
-  - Parameter categories
-  - Help descriptions
-- ✅ Validation logic:
-  - `initializeParameters()` - merged into `getParameterInfo()`
-  - `updateParameters()` - parameter dependency logic
-  - `updateMessages()` - custom validation messages
-- ✅ Execute script references - identifies original implementation scripts
 
 ## Installation
 
@@ -34,6 +15,7 @@ The converter extracts and translates:
 2. Open ArcGIS Pro
 3. In the Catalog pane, navigate to the folder containing `ToolBoxConverter.pyt`
 4. The toolbox will appear and can be added to your project
+
 
 ## Usage
 
@@ -49,7 +31,8 @@ The converter extracts and translates:
    - Complete toolbox structure
    - All tool definitions with parameters
    - Migrated validation logic
-   - Stub execute() methods with TODO comments
+   - Stub `execute()` methods with TODO comments
+
 
 ## Post-Conversion Steps
 
@@ -67,35 +50,17 @@ The converter creates a fully functional toolbox skeleton, but **you must implem
 
 4. **Migrate execution code** - Copy the logic from the original Python scripts referenced in the TODO comments into the `execute()` methods
 
-## Technical Details
 
-### What Gets Converted
 
-The tool reads and parses the following files from the .ATBX archive:
-- `toolbox.content` and `toolbox.content.rc` - Toolbox metadata
-- `{ToolName}.tool/tool.content` and `tool.content.rc` - Tool metadata and parameters
-- `{ToolName}.tool/tool.script.validate.py` - Validation logic
-- `{ToolName}.tool/tool.script.execute.link` - Reference to execution script
-
-### Validation Code Migration
-
-The converter automatically migrates validation methods:
-
-- **initializeParameters()** → Inserted into `getParameterInfo()` after parameter creation
-- **updateParameters()** → Copied to `updateParameters()` with variable name adjustments
-- **updateMessages()** → Copied to `updateMessages()` with variable name adjustments
-
-The code transformation includes:
-- Replacing `self.params` with `parameters` (or `params` in getParameterInfo)
-- Adjusting indentation levels
-- Preserving all logic and comments
-
-### Limitations
+## Limitations
 
 - **Execute methods are not converted**: The original Python scripts are separate files and must be manually migrated
 - **Complex parameter types**: Some advanced parameter types (GPValueTable with domains) may need manual adjustment
 - **Custom Python imports**: Any imports in the original scripts must be added to the .pyt file
 - **Toolsets**: Only processes tools in the root toolset (`<root>`)
+
+This tool is a quick hack to support my own needs, but I hope it can be useful for others as well.
+
 
 ## License
 
