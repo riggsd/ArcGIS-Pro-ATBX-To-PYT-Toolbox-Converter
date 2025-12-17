@@ -1,6 +1,6 @@
 # ArcGIS Pro ATBX to PYT Toolbox Converter
 
-A Python tool for ArcGIS Pro that converts legacy .ATBX toolboxes to the more portable and editable Python Toolbox (.pyt) format.
+A Python tool for ArcGIS Pro that converts .ATBX Toolboxes to the more portable and editable .PYT Python Toolbox format.
 
 This tool lets you take advantage of the convenient GUI for creating Tools and managing their Parameters by initially creating Script Tools in an .ATBX Toolbox. Once you've dialed in all the Parameters, their attributes, and even ToolValidator validation logic, you can convert to Python Tools in a .PYT Python Toolbox. A Python Toolbox is entirely written in Python and *may* be maintained and distributed as a single Python file, while an .ATBX Toolbox requires maintaining an opaque binary file alongside your .PY scripts.
 
